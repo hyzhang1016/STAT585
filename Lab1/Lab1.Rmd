@@ -1,0 +1,101 @@
+---
+title: "Lab 1"
+author: "Haley Jeppson, Ashish Jain, Vinny Paris"
+date: "January 19, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+library(tidyverse)
+library(viridis)
+
+```
+
+## Question 1
+The last word on page 21 is "May"
+
+
+**VINNY's problems:**
+
+While trying to compile H. Wickham's Advanced R book I run into the following issue:
+
+"grep: Inconsolata.log: No such file or directory
+mktextfm: mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input Inconsolata' failed to make Inconsolata.tfm."
+
+I am using a mac and I believe that the problem is a font does not naturally exist on my computer. Certain pieces of the book were created though (including the dedictaion and copyright section). I have downloaded the Inconsolata file but am stuck figuring out how to move it to the Font directory in my library. So my question is two fold: 1) Am I on the right track? 2) How do I move a file around on a mac? Thank you!
+
+**Ashish's Problems and Solutions:**
+
+I also faced the same problem while knitting the H. Wickham's Advanced R book. The book is using the "Inconsolata" font which is not a default font in mac. So in order to debug it, I googled it.
+
+**"Whenever in trouble use GOOGLE"**
+
+While searching through the internet we found the solution. First, we downloaded the Inconsolota font from [link](https://cooltext.com/Download-Font-Inconsolata). After that, we followed [these](http://superuser.com/questions/56787/how-to-install-and-find-fonts-for-mac-os-x) instructions and copied the font file into the following folders.
+
+* /Library/Fonts/
+* /Users/username/Library/Fonts
+
+Thank you Haley and Vinny for your help!!
+
+
+## Question 2
+
+#### Retrieving the Data
+
+
+
+```{r}
+
+
+tmax <- function(stationid){
+  station <- paste("ushcn.v2.5.5.20170118/", stationid, ".raw.tmax", sep="")
+  temps <- read_fwf(station, 
+                   col_positions=  fwf_positions(
+                     start=c( 1,13, rep(16+9*0:11, each=4) + c(1,7,8,9)), 
+                     end  =c(11,16, rep(16+9*0:11, each=4) + c(6,7,8,9))))
+  
+names(temps) <- c("Station", "Year", 
+                 paste0(rep(c("Value","DMflag", "QCflag", "DSflag"), 12), 
+                        rep(1:12, each=4)))
+
+temps <- temps %>% 
+  gather(key="Month", value="Temp_Max", starts_with("Value"))
+temps$Month <- as.numeric(gsub("Value", "", temps$Month))
+temps$Temp_Max <- replace(temps$Temp_Max, 
+                          temps$Temp_Max == -9999, NA)
+temps$Temp_Max <- temps$Temp_Max/100
+temps$YearMonth <- temps$Year+temps$Month/12
+temps
+}
+
+data <- tmax("USH00011084")
+
+head(data)
+
+```
+
+#### Visualizing the Data
+
+
+```{r pressure, echo=FALSE}
+
+data %>% ggplot(aes(x = YearMonth, Temp_Max, colour= Temp_Max)) + 
+  geom_point()  +
+  scale_color_viridis(option="B")
+
+data %>% ggplot(aes(x = Year, Temp_Max, colour=Temp_Max)) + 
+  geom_point() + facet_wrap(~Month, nrow=2) +
+  scale_color_viridis(option="B")
+
+
+data %>% ggplot(aes(x = Month, Temp_Max, colour=Year)) + 
+  geom_point() +geom_jitter(width = 0.34)+
+  scale_color_viridis(option="B")
+```
+
+
