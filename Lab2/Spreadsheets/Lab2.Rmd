@@ -1,0 +1,36 @@
+---
+title: "Lab 3"
+author: "Ashish Jain"
+date: "February 16, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+library(tidyverse)
+```
+
+
+```{r}
+fileOne<-readxl::excel_sheets("Spreadsheets/FileOne.xlsx")
+fileTwo<-readxl::excel_sheets("Spreadsheets/FileTwo.xlsx")
+semesters<-c(1,2,3,4)
+readxl::read_excel("Spreadsheets/FileOne.xlsx", sheet=1) %>% glimpse()
+
+
+
+
+```
+
+#### Visualizing the Data
+
+
+```{r pressure, echo=FALSE}
+
+```
+
+
