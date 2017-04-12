@@ -8,7 +8,7 @@ matches <- read.csv("../data/matches.csv", stringsAsFactors = FALSE)
 
 shinyServer(function(input, output,session) {
 
-  observe({
+  observeEvent(input$year,{
     x <- input$team
     if(input$year != "All")
     {
