@@ -1,4 +1,8 @@
 library(shiny)
+library(ggplot2)
+library(dplyr)
+library(plotly)
+library(ggvis)
 
 nyc <- read.csv("nyc_emergency.csv", stringsAsFactors = FALSE)
 
